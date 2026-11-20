@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#fbf6f1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Poon &amp; Noey">
+<title>Poon &amp; Noey · Two Years</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,500&family=Caveat:wght@500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbf6f1;
+    --paper: #fffdfa;
+    --ink: #3a2a2e;
+    --muted: #8a7479;
+    --rose: #d9667a;
+    --rose-soft: #f4d6d9;
+    --gold: #c9a26b;
+    --line: #ead9d3;
+    --shadow: 0 10px 30px rgba(90, 40, 50, .14);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; overflow-x: clip; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: Inter, system-ui, sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+    overflow-x: clip;
+    -webkit-tap-highlight-color: transparent;
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  body.locked { overflow: hidden; }
+  button { font: inherit; touch-action: manipulation; }
+  img { display: block; max-width: 100%; }
+  .hand { font-family: Caveat, cursive; }
+  .serif { font-family: "Cormorant Garamond", Georgia, serif; }
+
+  /* ---------- Gate ---------- */
+  #gate {
+    position: fixed; inset: 0; z-index: 50;
+    display: grid; place-items: center; text-align: center;
+    background: radial-gradient(circle at 50% 40%, #fff 0%, var(--bg) 60%, var(--rose-soft) 130%);
+    transition: opacity 1s ease, visibility 1s;
+    padding: max(24px, env(safe-area-inset-top)) 24px max(24px, env(safe-area-inset-bottom));
+  }
+  #gate.gone { opacity: 0; visibility: hidden; }
+  #gate p { color: var(--muted); letter-spacing: .25em; text-transform: uppercase; font-size: 12px; }
+  #gate h1 { font-family: Caveat, cursive; font-size: clamp(48px, 12vw, 88px); color: var(--rose); line-height: 1.1; margin: 8px 0 28px; }
+  .heart-btn {
+    width: 92px; height: 92px; border: 0; cursor: pointer; background: none;
+    animation: beat 1.4s ease-in-out infinite;
+  }
+  .heart-btn svg { width: 100%; height: 100%; filter: drop-shadow(0 8px 16px rgba(217,102,122,.4)); }
+  #gate small { display: block; margin-top: 14px; color: var(--muted); font-size: 13px; }
+  @keyframes beat { 0%,100% { transform: scale(1); } 15% { transform: scale(1.12); } 30% { transform: scale(1); } 45% { transform: scale(1.08); } }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    min-height: 100svh;
+    display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 48px;
+    max-width: 1100px; margin: 0 auto; padding: 64px 24px;
+  }
+  .eyebrow { letter-spacing: .3em; text-transform: uppercase; font-size: 12px; color: var(--muted); }
+  .hero h2 {
+    font-family: "Cormorant Garamond", serif; font-weight: 400;
+    font-size: clamp(56px, 9vw, 104px); line-height: .95; margin: 16px 0 8px;
+  }
+  .hero h2 em { color: var(--rose); font-style: italic; }
+  .hero .since { font-family: Caveat, cursive; font-size: 30px; color: var(--muted); }
+  .counter { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+  .counter div {
+    background: var(--paper); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 16px; min-width: 84px; text-align: center; box-shadow: 0 4px 14px rgba(90,40,50,.06);
+  }
+  .counter b { display: block; font-family: "Cormorant Garamond", serif; font-size: 38px; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
+  .counter span { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); }
+  .countdown { margin-top: 20px; font-size: 15px; color: var(--muted); }
+  .countdown strong { color: var(--rose); font-weight: 500; }
+
+  .hero-photo { position: relative; justify-self: center; width: min(100%, 420px); }
+  .hero-photo .polaroid { transform: rotate(3deg); }
+  .hero-photo .polaroid.back { position: absolute; inset: 0; transform: rotate(-5deg) translate(-24px, 12px); z-index: -1; }
+  .scroll-hint { text-align: center; color: var(--muted); font-size: 13px; padding-bottom: 24px; animation: bob 2s ease-in-out infinite; }
+  @keyframes bob { 50% { transform: translateY(6px); } }
+
+  /* ---------- Polaroid ---------- */
+  .polaroid {
+    background: #fff; padding: 12px 12px 52px; box-shadow: var(--shadow);
+    border-radius: 3px; position: relative; cursor: zoom-in;
+    transition: transform .4s ease, box-shadow .4s ease;
+  }
+  .polaroid img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; background: var(--rose-soft); }
+  .polaroid figcaption {
+    position: absolute; left: 0; right: 0; bottom: 10px; text-align: center;
+    font-family: Caveat, cursive; font-size: 24px; color: var(--ink);
+  }
+  @media (hover: hover) {
+    .polaroid:hover { box-shadow: 0 18px 40px rgba(90,40,50,.22); }
+  }
+  .tape {
+    position: absolute; top: -12px; left: 50%; width: 90px; height: 26px;
+    transform: translateX(-50%) rotate(-3deg);
+    background: rgba(244, 214, 217, .75); box-shadow: 0 1px 3px rgba(0,0,0,.08);
+  }
+
+  /* ---------- Timeline ---------- */
+  .section-head { text-align: center; padding: 96px 24px 40px; }
+  .section-head h3 { font-family: "Cormorant Garamond", serif; font-weight: 400; font-size: clamp(40px, 6vw, 60px); line-height: 1.1; margin-top: 8px; }
+  .section-head p { color: var(--muted); max-width: 520px; margin: 12px auto 0; }
+
+  .timeline { position: relative; max-width: 1000px; margin: 0 auto; padding: 24px 24px 64px; }
+  .timeline::before {
+    content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px;
+    background: repeating-linear-gradient(to bottom, var(--rose-soft) 0 10px, transparent 10px 18px);
+    transform: translateX(-50%);
+  }
+  .chapter {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center;
+    margin-bottom: 96px; position: relative;
+  }
+  .chapter::after {
+    content: "♥"; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    color: var(--rose); background: var(--bg); font-size: 18px; padding: 6px 0; line-height: 1;
+  }
+  .chapter .photos { position: relative; }
+  .chapter .photos .polaroid { width: min(100%, 340px); }
+  .chapter:nth-child(odd) .photos { justify-self: end; }
+  .chapter:nth-child(odd) .polaroid { transform: rotate(-2.5deg); }
+  .chapter:nth-child(even) .photos { order: 2; justify-self: start; }
+  .chapter:nth-child(even) .polaroid { transform: rotate(2.5deg); }
+  .chapter:nth-child(even) .text { text-align: right; }
+  @media (hover: hover) {
+    .chapter .polaroid:hover { transform: rotate(0) scale(1.03); }
+  }
+  .photos.pair { height: 500px; width: min(100%, 400px); }
+  .photos.pair .polaroid { position: absolute; width: 74%; }
+  .photos.pair .polaroid:first-child { top: 0; left: 0; transform: rotate(-6deg); z-index: 1; }
+  .photos.pair .polaroid:last-child { bottom: 0; right: 0; transform: rotate(5deg); z-index: 2; }
+  @media (hover: hover) {
+    .photos.pair .polaroid:hover { z-index: 3; transform: rotate(0) scale(1.04); }
+  }
+
+  .chapter .num { font-family: Caveat, cursive; font-size: 26px; color: var(--rose); }
+  .chapter h4 { font-family: "Cormorant Garamond", serif; font-size: 40px; font-weight: 600; line-height: 1.1; margin: 2px 0 10px; }
+  .chapter .text p { color: var(--muted); font-size: 16px; }
+  .chapter .tag {
+    display: inline-block; margin-top: 14px; padding: 4px 12px; border-radius: 999px;
+    font-size: 12px; letter-spacing: .08em; background: var(--rose-soft); color: #9c3f52;
+  }
+
+  .reveal { opacity: 0; transform: translateY(40px); transition: opacity .9s ease, transform .9s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* ---------- Numbers ---------- */
+  .numbers {
+    max-width: 900px; margin: 0 auto; padding: 0 24px 40px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; text-align: center;
+  }
+  .numbers div { padding: 24px 8px; border-top: 1px solid var(--line); }
+  .numbers b { display: block; font-family: "Cormorant Garamond", serif; font-size: 52px; font-weight: 600; color: var(--rose); line-height: 1; }
+  .numbers span { font-size: 13px; color: var(--muted); }
+
+  /* ---------- Letter ---------- */
+  .letter-wrap { max-width: 640px; margin: 0 auto; padding: 0 24px 120px; text-align: center; }
+  .envelope {
+    position: relative; width: min(100%, 360px); aspect-ratio: 3 / 2; margin: 0 auto;
+    cursor: pointer; perspective: 800px;
+  }
+  .envelope .body { position: absolute; inset: 0; background: #e9b9bf; border-radius: 8px; box-shadow: var(--shadow); }
+  .envelope .pocket {
+    position: absolute; inset: 0; border-radius: 8px; z-index: 3;
+    background:
+      linear-gradient(to top right, #f2cdd1 50%, transparent 50.5%) left / 50.5% 100% no-repeat,
+      linear-gradient(to top left, #efc4c9 50%, transparent 50.5%) right / 50.5% 100% no-repeat;
+  }
+  .envelope .flap {
+    position: absolute; left: 0; right: 0; top: 0; height: 60%; z-index: 4;
+    background: #dfa3ab; clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: top; transition: transform .8s ease, z-index 0s .4s;
+  }
+  .envelope .seal {
+    position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%); z-index: 5;
+    width: 54px; height: 54px; border-radius: 50%; background: var(--rose); color: #fff;
+    display: grid; place-items: center; font-size: 22px; box-shadow: 0 4px 10px rgba(0,0,0,.18);
+    transition: opacity .3s;
+  }
+  .envelope.open .flap { transform: rotateX(180deg); z-index: 1; }
+  .envelope.open .seal { opacity: 0; }
+  .envelope-hint { margin-top: 18px; color: var(--muted); font-size: 14px; }
+
+  .letter {
+    display: none; text-align: left; background: var(--paper);
+    padding: 44px 40px; border-radius: 6px; box-shadow: var(--shadow);
+    background-image: repeating-linear-gradient(transparent 0 33px, #f1e4df 33px 34px);
+    background-position: 0 92px;
+    font-family: Caveat, cursive; font-size: 25px; line-height: 34px;
+    animation: rise 1s ease forwards;
+  }
+  .letter.show { display: block; }
+  .letter p { margin-bottom: 34px; }
+  .letter .sign { text-align: right; color: var(--rose); font-size: 30px; }
+  @keyframes rise { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
+
+  footer { text-align: center; padding: 40px 24px calc(60px + env(safe-area-inset-bottom)); color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); }
+  footer .hand { font-size: 32px; color: var(--rose); display: block; }
+
+  /* ---------- Lightbox ---------- */
+  #lightbox {
+    position: fixed; inset: 0; z-index: 40; background: rgba(30, 18, 22, .92);
+    display: none; align-items: center; justify-content: center; flex-direction: column; padding: 24px;
+  }
+  #lightbox.show { display: flex; animation: fade .3s ease; }
+  #lightbox img { max-width: 100%; max-height: 82svh; border-radius: 4px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  #lightbox p { color: #fff; font-family: Caveat, cursive; font-size: 30px; margin-top: 14px; }
+  #lightbox button {
+    position: absolute; background: rgba(255,255,255,.12); color: #fff; border: 0; cursor: pointer;
+    width: 48px; height: 48px; border-radius: 50%; font-size: 22px;
+  }
+  #lightbox { touch-action: pan-y; overscroll-behavior: contain; }
+  @media (hover: hover) { #lightbox button:hover { background: rgba(255,255,255,.25); } }
+  #lightbox button:active { background: rgba(255,255,255,.3); }
+  #lb-close { top: max(18px, calc(env(safe-area-inset-top) + 8px)); right: max(18px, env(safe-area-inset-right)); }
+  #lb-prev { left: 18px; top: 50%; transform: translateY(-50%); }
+  #lb-next { right: 18px; top: 50%; transform: translateY(-50%); }
+  @keyframes fade { from { opacity: 0; } }
+
+  /* ---------- Floating hearts ---------- */
+  .float-heart {
+    position: fixed; bottom: -40px; z-index: 30; pointer-events: none; color: var(--rose);
+    animation: floatUp linear forwards;
+  }
+  @keyframes floatUp {
+    to { transform: translateY(-110vh) rotate(var(--r)); opacity: 0; }
+  }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width: 760px) {
+    .hero {
+      grid-template-columns: 1fr; text-align: center; gap: 36px;
+      padding: calc(env(safe-area-inset-top) + 40px) 20px 40px;
+    }
+    .hero h2 { font-size: clamp(56px, 18vw, 80px); }
+    .hero .since { font-size: 26px; }
+    .counter { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 26px; }
+    .counter div { min-width: 0; padding: 12px 4px; }
+    .counter b { font-size: 28px; }
+    .counter span { font-size: 10px; letter-spacing: .1em; }
+    .countdown { font-size: 14px; }
+    .hero-photo { width: min(78%, 300px); margin-left: 24px; }
+    .hero-photo .polaroid.back { transform: rotate(-5deg) translate(-18px, 10px); }
+    .scroll-hint { padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
+
+    .section-head { padding: 72px 20px 28px; }
+    .section-head h3 { font-size: clamp(34px, 10vw, 44px); }
+    .timeline { padding: 16px 20px 40px; }
+    .timeline::before { left: 32px; }
+    .chapter { grid-template-columns: 1fr; gap: 24px; padding-left: 32px; margin-bottom: 64px; }
+    .chapter::after { left: 12px; top: 0; }
+    .chapter .photos, .chapter:nth-child(odd) .photos, .chapter:nth-child(even) .photos { order: 0; justify-self: center; }
+    .chapter .photos .polaroid { width: min(100%, 300px); }
+    .chapter:nth-child(even) .text { text-align: left; }
+    .chapter h4 { font-size: 34px; }
+    .chapter .num { font-size: 24px; }
+    .chapter .text p { font-size: 15.5px; }
+    .photos.pair { height: 420px; width: min(100%, 300px); }
+    .photos.pair .polaroid { width: 72%; }
+    .polaroid { padding: 10px 10px 46px; }
+    .polaroid figcaption { font-size: 22px; bottom: 8px; }
+
+    .numbers { grid-template-columns: repeat(2, 1fr); gap: 8px 12px; padding: 0 20px 32px; }
+    .numbers b { font-size: 44px; }
+    .letter-wrap { padding: 0 20px 96px; }
+    .letter { padding: 32px 22px; font-size: 22px; background-position: 0 80px; }
+    .letter .sign { font-size: 27px; }
+
+    #lightbox { padding: calc(env(safe-area-inset-top) + 64px) 12px calc(env(safe-area-inset-bottom) + 84px); }
+    #lightbox img { max-width: 100%; max-height: calc(100svh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 210px); object-fit: contain; }
+    #lightbox p { font-size: 26px; margin-top: 10px; }
+    #lb-prev, #lb-next { top: auto; bottom: calc(env(safe-area-inset-bottom) + 16px); transform: none; width: 52px; height: 52px; }
+    #lb-prev { left: calc(50% - 64px); }
+    #lb-next { right: calc(50% - 64px); }
+  }
+  /* very narrow phones (SE / mini) */
+  @media (max-width: 370px) {
+    .counter b { font-size: 24px; }
+    .counter span { font-size: 9px; }
+    .chapter h4 { font-size: 30px; }
+    .photos.pair { height: 380px; }
+  }
+  /* phone held sideways */
+  @media (max-height: 500px) and (orientation: landscape) {
+    .hero { min-height: auto; padding-top: 32px; padding-bottom: 32px; }
+    .hero-photo { width: min(100%, 240px); }
+    #lightbox img { max-height: 70svh; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body class="locked">
+
+<!-- Opening screen -->
+<div id="gate">
+  <div>
+    <p>A little something for</p>
+    <h1>Noey</h1>
+    <button class="heart-btn" id="openBtn" aria-label="Open">
+      <svg viewBox="0 0 24 24"><path fill="#d9667a" d="M12 21s-7.5-4.6-10-9.3C.3 8.4 2.1 4 6.2 4c2.3 0 3.8 1.3 4.8 2.8l1 1.4 1-1.4C14 5.3 15.5 4 17.8 4 21.9 4 23.7 8.4 22 11.7 19.5 16.4 12 21 12 21z"/></svg>
+    </button>
+    <small>tap the heart</small>
+  </div>
+</div>
+
+<!-- Hero -->
+<header class="hero">
+  <div>
+    <div class="eyebrow">Happy 2nd Anniversary</div>
+    <h2>Poon <em>&amp;</em><br>Noey</h2>
+    <div class="since">together since 20 November 2024</div>
+    <div class="counter" aria-live="off">
+      <div><b id="c-days">0</b><span>days</span></div>
+      <div><b id="c-hours">0</b><span>hours</span></div>
+      <div><b id="c-mins">0</b><span>minutes</span></div>
+      <div><b id="c-secs">0</b><span>seconds</span></div>
+    </div>
+    <div class="countdown" id="countdown"></div>
+  </div>
+  <div class="hero-photo">
+    <figure class="polaroid back" data-idx="0"><img src="images/01-book-event.jpg" alt=""><figcaption></figcaption></figure>
+    <figure class="polaroid" data-idx="7"><span class="tape"></span><img src="images/08-khaoyai-1.jpg" alt="Poon and Noey at Khao Yai"><figcaption>us ♥</figcaption></figure>
+  </div>
+</header>
+<div class="scroll-hint">scroll down for our story ↓</div>
+
+<!-- Timeline -->
+<section>
+  <div class="section-head reveal">
+    <div class="eyebrow">Our story so far</div>
+    <h3>Two years of little adventures</h3>
+    <p>Every place we went, every meal we shared, all in order, one memory at a time.</p>
+  </div>
+  <div class="timeline" id="timeline"></div>
+</section>
+
+<!-- Numbers -->
+<section class="numbers reveal">
+  <div><b id="n-days">730</b><span>days together</span></div>
+  <div><b>11</b><span>memories here</span></div>
+  <div><b>2</b><span>countries</span></div>
+  <div><b>∞</b><span>more to come</span></div>
+</section>
+
+<!-- Letter -->
+<section>
+  <div class="section-head reveal">
+    <div class="eyebrow">One more thing</div>
+    <h3>A letter for you</h3>
+  </div>
+  <div class="letter-wrap">
+    <div class="envelope reveal" id="envelope" role="button" tabindex="0" aria-label="Open the letter">
+      <div class="body"></div>
+      <div class="flap"></div>
+      <div class="pocket"></div>
+      <div class="seal">♥</div>
+    </div>
+    <div class="envelope-hint" id="envHint">tap to open</div>
+
+    <!-- ✏️ Edit the letter here -->
+    <div class="letter" id="letter">
+      <p>Dear Noey,</p>
+      <p>Two years ago, on 20 November 2024, my favourite chapter started. Since then we've gone from a book event to cafés full of cats and dogs, from cooking in my kitchen to the beaches of Pattaya, the hills of Khao Yai, and all the way to the torii gates of Kyoto.</p>
+      <p>Thank you for every laugh, every trip, every meal, and for putting up with my silly faces in all our selfies. Wherever we go, the best part is always being there with you.</p>
+      <p>Here's to year three, and all the adventures we haven't had yet.</p>
+      <p class="sign">Love you always,<br>Poon ♥</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="hand">Poon ♥ Noey</span>
+  20.11.2024 to forever
+</footer>
+
+<!-- Lightbox -->
+<div id="lightbox" aria-modal="true" role="dialog">
+  <button id="lb-close" aria-label="Close">✕</button>
+  <button id="lb-prev" aria-label="Previous">‹</button>
+  <img id="lb-img" alt="">
+  <p id="lb-cap"></p>
+  <button id="lb-next" aria-label="Next">›</button>
+</div>
+
+<script>
+  // ✏️ Your story, in order. Edit titles and text freely.
+  const chapters = [
+    { title: "The Book Event", tag: "where it all began", photos: [["01-book-event.jpg", "book event"]],
+      text: "Surrounded by books, but all I wanted to look at was you. One of our very first memories together." },
+    { title: "Dog Café", tag: "café date", photos: [["02-dog-cafe.jpg", "dog café"]],
+      text: "A room full of fluffy dogs, and somehow you were still the cutest one there." },
+    { title: "Cat Café", tag: "café date", photos: [["03-cat-cafe.jpg", "cat café"]],
+      text: "The dogs had their turn, so the cats got theirs too. We definitely needed both." },
+    { title: "Cooking at My House", tag: "home", photos: [["04-cooking.jpg", "chef Noey"]],
+      text: "Our first time cooking together. Maybe not the prettiest omelette, but the best one I've ever eaten." },
+    { title: "Pattaya", tag: "first trip", photos: [["05-pattaya-1.jpg", "Pattaya"], ["06-pattaya-2.jpg", "sea breeze"]],
+      text: "Our first trip together. Sea, sun, and too many photos, which is exactly how it should be." },
+    { title: "Buriram", tag: "road trip", photos: [["07-buriram.jpg", "Buriram"]],
+      text: "Off to Isaan together. A new place, made better because you were with me." },
+    { title: "Khao Yai", tag: "mountains", photos: [["08-khaoyai-1.jpg", "nom nom"], ["09-khaoyai-2.jpg", "Khao Yai"]],
+      text: "Cool air, green hills, and me trying to eat your face. You still laughed, so I'll count that as a win." },
+    { title: "Dim Sum Dinner", tag: "food date", photos: [["10-dim-sum.jpg", "dim sum night"]],
+      text: "Endless little baskets and good conversation. My favourite kind of evening." },
+    { title: "Kanchanaburi", tag: "trip", photos: [["11-kanchanaburi.jpg", "Kanchanaburi"]],
+      text: "Rivers, nature, and another chapter in our travel book." },
+    { title: "Kyoto", tag: "Japan 🇯🇵", photos: [["12-kyoto.jpg", "Fushimi Inari"]],
+      text: "Our biggest adventure yet. Walking through thousands of torii gates, and you turned around and smiled at me like that." },
+    { title: "Uji", tag: "Japan 🇯🇵", photos: [["13-uji.jpg", "Uji"]],
+      text: "Matcha country. A slow, beautiful day that I never wanted to end." },
+  ];
+
+  // Build timeline + flat photo list for the lightbox
+  const all = [];
+  const tl = document.getElementById("timeline");
+  chapters.forEach((c, i) => {
+    const figs = c.photos.map(([file, cap]) => {
+      const idx = all.push({ src: "images/" + file, cap }) - 1;
+      return `<figure class="polaroid" data-idx="${idx}"><span class="tape"></span><img src="images/${file}" alt="${c.title}" loading="lazy"><figcaption>${cap}</figcaption></figure>`;
+    }).join("");
+    tl.insertAdjacentHTML("beforeend", `
+      <article class="chapter reveal">
+        <div class="photos${c.photos.length > 1 ? " pair" : ""}">${figs}</div>
+        <div class="text">
+          <div class="num">chapter ${i + 1}</div>
+          <h4>${c.title}</h4>
+          <p>${c.text}</p>
+          <span class="tag">${c.tag}</span>
+        </div>
+      </article>`);
+  });
+
+  // Counter
+  const start = new Date("2024-11-20T00:00:00+07:00");
+  const anniv = new Date("2026-11-20T00:00:00+07:00");
+  const $ = id => document.getElementById(id);
+  function tick() {
+    const now = new Date();
+    let s = Math.max(0, Math.floor((now - start) / 1000));
+    const d = Math.floor(s / 86400); s %= 86400;
+    $("c-days").textContent = d.toLocaleString();
+    $("c-hours").textContent = Math.floor(s / 3600);
+    $("c-mins").textContent = Math.floor((s % 3600) / 60);
+    $("c-secs").textContent = s % 60;
+    $("n-days").textContent = d.toLocaleString();
+    const left = anniv - now;
+    if (left > 0) {
+      const ld = Math.floor(left / 86400000), lh = Math.floor(left / 3600000) % 24;
+      $("countdown").innerHTML = `<strong>${ld} day${ld === 1 ? "" : "s"}, ${lh} hour${lh === 1 ? "" : "s"}</strong> until our 2nd anniversary`;
+    } else if (left > -86400000) {
+      $("countdown").innerHTML = `<strong>It's our anniversary today! 🎉</strong>`;
+    } else {
+      $("countdown").textContent = "";
+    }
+  }
+  tick(); setInterval(tick, 1000);
+
+  // Gate
+  $("openBtn").addEventListener("click", () => {
+    $("gate").classList.add("gone");
+    document.body.classList.remove("locked");
+    burst(24);
+  });
+
+  // Reveal on scroll
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+  }), { threshold: 0.15 });
+  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+
+  // Lightbox
+  let cur = 0;
+  const lb = $("lightbox");
+  function show(i) {
+    cur = (i + all.length) % all.length;
+    $("lb-img").src = all[cur].src;
+    $("lb-cap").textContent = all[cur].cap;
+    lb.classList.add("show");
+    document.body.classList.add("locked");
+  }
+  function hide() {
+    lb.classList.remove("show");
+    document.body.classList.remove("locked");
+  }
+  document.addEventListener("click", e => {
+    const f = e.target.closest(".polaroid");
+    if (f && f.dataset.idx) show(+f.dataset.idx);
+  });
+  $("lb-close").onclick = hide;
+  $("lb-prev").onclick = () => show(cur - 1);
+  $("lb-next").onclick = () => show(cur + 1);
+  lb.addEventListener("click", e => { if (e.target === lb) hide(); });
+  document.addEventListener("keydown", e => {
+    if (!lb.classList.contains("show")) return;
+    if (e.key === "Escape") hide();
+    if (e.key === "ArrowLeft") show(cur - 1);
+    if (e.key === "ArrowRight") show(cur + 1);
+  });
+  let tx = 0, ty = 0;
+  lb.addEventListener("touchstart", e => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive: true });
+  lb.addEventListener("touchend", e => {
+    const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) show(cur + (dx < 0 ? 1 : -1));
+    else if (dy > 90 && Math.abs(dy) > Math.abs(dx)) hide(); // swipe down to close
+  });
+
+  // Letter
+  function openLetter() {
+    const env = $("envelope");
+    if (env.classList.contains("open")) return;
+    env.classList.add("open");
+    $("envHint").textContent = "";
+    setTimeout(() => {
+      env.style.display = "none";
+      $("letter").classList.add("show");
+      burst(40);
+    }, 900);
+  }
+  $("envelope").addEventListener("click", openLetter);
+  $("envelope").addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLetter(); } });
+
+  // Floating hearts
+  function burst(n) {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    for (let i = 0; i < n; i++) {
+      setTimeout(() => {
+        const h = document.createElement("span");
+        h.className = "float-heart";
+        h.textContent = ["♥", "❤", "♡"][Math.floor(Math.random() * 3)];
+        h.style.left = Math.random() * 100 + "vw";
+        h.style.fontSize = 14 + Math.random() * 26 + "px";
+        h.style.opacity = .5 + Math.random() * .5;
+        h.style.setProperty("--r", (Math.random() * 120 - 60) + "deg");
+        h.style.animationDuration = 4 + Math.random() * 4 + "s";
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), 9000);
+      }, i * 90);
+    }
+  }
+</script>
+</body>
+</html>
